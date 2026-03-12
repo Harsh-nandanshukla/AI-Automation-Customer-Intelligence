@@ -1,0 +1,51 @@
+id,query,expected_category,predicted_category,sentiment,confidence,automation_action
+1,Where is my order? It's been 6 days and I haven't received anything.,order_status,order_status,angry,0.9,Send tracking link automatically
+2,Can you tell me the current status of my order #BL2947?,order_status,order_status,neutral,0.9,Send tracking link automatically
+3,Just wanted to check if my order has been shipped yet.,order_status,order_status,neutral,0.9,Send tracking link automatically
+4,I placed an order 3 days ago and there's no update on the tracking page.,order_status,order_status,neutral,0.9,Send tracking link automatically
+5,"Hey! My order arrived super fast, just wanted to confirm everything is correct.",order_status,order_status,positive,0.95,Send tracking link automatically
+6,Order #BL3021 shows delivered but I never received it. What's going on?,order_status,delivery_delay,angry,0.9,Send apology message and updated delivery ETA
+7,My package has been sitting at the warehouse for 4 days with no movement.,order_status,delivery_delay,angry,0.9,Send apology message and updated delivery ETA
+8,My delivery was supposed to arrive yesterday and it still hasn't shown up.,delivery_delay,delivery_delay,angry,0.9,Send apology message and updated delivery ETA
+9,It's been 10 days since I ordered and the courier hasn't even attempted delivery.,delivery_delay,delivery_delay,angry,0.9,Send apology message and updated delivery ETA
+10,The tracking says out for delivery since 2 days ago. Is something wrong?,delivery_delay,delivery_delay,angry,0.9,Send apology message and updated delivery ETA
+11,I ordered before the sale ended specifically for fast delivery and now it's delayed.,delivery_delay,delivery_delay,angry,0.9,Send apology message and updated delivery ETA
+12,Courier attempted delivery once and never came back. No rescheduling option either.,delivery_delay,delivery_delay,angry,0.9,Send apology message and updated delivery ETA
+13,My order has been in transit for 8 days. This is completely unacceptable.,delivery_delay,delivery_delay,angry,0.9,Send apology message and updated delivery ETA
+14,Slight delay is fine but can you give me a realistic delivery date at least?,delivery_delay,delivery_delay,neutral,0.9,Send apology message and updated delivery ETA
+15,I want a full refund. The product I received is not what I ordered.,refund_request,refund_request,angry,0.9,Initiate refund workflow
+16,Can I return my whey protein? I bought the wrong flavor by mistake.,refund_request,refund_request,neutral,0.9,Initiate refund workflow
+17,I've been waiting 2 weeks for my refund to reflect in my account.,refund_request,refund_request,angry,0.9,Initiate refund workflow
+18,Requesting a refund as the product caused an allergic reaction.,refund_request,refund_request,angry,0.9,Initiate refund workflow
+19,I accidentally ordered twice. Please cancel one and refund me.,refund_request,refund_request,neutral,0.9,Initiate refund workflow
+20,Your refund policy says 7 days but it's been 15 days and nothing yet.,refund_request,refund_request,angry,0.9,Initiate refund workflow
+21,The creatine I received has a broken seal. Clearly tampered with.,product_issue,product_issue,angry,0.9,Escalate to human support agent
+22,My protein powder has an extremely strange smell. Is it expired?,product_issue,product_issue,neutral,0.9,Escalate to human support agent
+23,The pre-workout I ordered has completely different packaging than advertised.,product_issue,product_issue,angry,0.9,Escalate to human support agent
+24,Found a hard lump in my mass gainer. Looks like it got wet during storage.,product_issue,product_issue,angry,0.9,Escalate to human support agent
+25,The capsules in my multivitamin bottle are half empty. Short fill issue?,product_issue,product_issue,angry,0.9,Escalate to human support agent
+26,I've been using your whey for a month and noticed the taste changed. New formula?,product_issue,product_issue,neutral,0.9,Escalate to human support agent
+27,Received a damaged box. The tub inside is cracked and leaking.,product_issue,product_issue,angry,0.9,Escalate to human support agent
+28,I want to cancel my monthly subscription immediately.,subscription_issue,subscription_issue,neutral,0.9,Provide subscription management link
+29,How do I change my subscription from chocolate to vanilla flavor?,subscription_issue,subscription_issue,neutral,0.9,Provide subscription management link
+30,I was charged for my subscription even after I cancelled it last week.,subscription_issue,subscription_issue,angry,0.9,Provide subscription management link
+31,Can I pause my subscription for 2 months while I travel?,subscription_issue,subscription_issue,neutral,0.9,Provide subscription management link
+32,My subscription order skipped this month without any notification.,subscription_issue,subscription_issue,angry,0.9,Provide subscription management link
+33,I want to upgrade my subscription plan to the premium bundle.,subscription_issue,subscription_issue,neutral,0.9,Provide subscription management link
+34,Been a subscriber for a year. Is there any loyalty discount available?,subscription_issue,subscription_issue,neutral,0.9,Provide subscription management link
+35,Payment failed but the amount was deducted from my bank account.,payment_failure,payment_failure,angry,0.9,Send payment retry link
+36,I'm trying to pay with my credit card but the checkout keeps rejecting it.,payment_failure,payment_failure,angry,0.9,Send payment retry link
+37,Got charged twice for the same order. Please reverse the duplicate charge.,payment_failure,refund_request,angry,0.9,Initiate refund workflow
+38,My UPI payment timed out but I was still charged. Order not placed though.,payment_failure,payment_failure,angry,0.9,Send payment retry link
+39,The EMI option isn't working on your website for orders above 2000.,payment_failure,payment_failure,angry,0.9,Send payment retry link
+40,I used a gift card at checkout but the balance wasn't deducted properly.,payment_failure,payment_failure,angry,0.9,Send payment retry link
+41,What is the difference between whey isolate and whey concentrate?,general_query,general_query,neutral,0.9,Respond with FAQ information
+42,Does your pre-workout contain caffeine? I'm sensitive to stimulants.,general_query,general_query,neutral,0.9,Respond with FAQ information
+43,Are your products tested for banned substances? I'm a competitive athlete.,general_query,general_query,neutral,0.9,Respond with FAQ information
+44,What is the best product for lean muscle gain for a beginner?,general_query,general_query,neutral,0.9,Respond with FAQ information
+45,Do you offer bulk pricing for gym owners who want to resell?,general_query,general_query,neutral,0.9,Respond with FAQ information
+46,Is your whey protein suitable for lactose intolerant people?,general_query,general_query,neutral,0.9,Respond with FAQ information
+47,What are the shipping charges for orders to remote locations in Northeast India?,general_query,general_query,neutral,0.9,Respond with FAQ information
+48,I love the new mango flavor of the BCAA. Tastes amazing honestly.,general_query,general_query,positive,0.95,Respond with FAQ information
+49,Does the mass gainer contain any artificial sweeteners or preservatives?,general_query,general_query,neutral,0.9,Respond with FAQ information
+50,Can I stack your creatine with the pre-workout or is that too much?,general_query,general_query,neutral,0.9,Respond with FAQ information
