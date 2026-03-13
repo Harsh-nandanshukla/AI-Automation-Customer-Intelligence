@@ -1,36 +1,57 @@
 import matplotlib.pyplot as plt
 
 boxes = [
-    ("Customer Messages\n(Instagram / WhatsApp / Email)", 0.5, 0.9),
-    ("API / Webhook\nData Ingestion", 0.5, 0.75),
-    ("AI Processing Layer\n• Query Classification\n• Sentiment Detection", 0.5, 0.6),
-    ("Automation Engine\n• Auto Replies\n• Escalation Logic", 0.5, 0.45),
-    ("Data Storage\nQuery Logs & Analytics", 0.5, 0.3),
-    ("Analytics Dashboard\n(Streamlit)", 0.5, 0.15),
+    ("Customer Queries\nInstagram • WhatsApp • Email • Website Chat", 0.5, 0.92),
+
+    ("API / Webhook Layer\nCollect Incoming Messages", 0.5, 0.78),
+
+    ("AI Processing Layer\n• Query Classification\n• Sentiment Detection\n• Priority Assignment", 0.5, 0.64),
+
+    ("Decision Engine\n• Confidence Check\n• Escalation Logic\n• Suggested Reply Generation", 0.5, 0.50),
+
+    ("Data Storage\nQuery Logs • Analytics Dataset", 0.5, 0.36),
+
+    ("Analytics Dashboard\nStreamlit Monitoring & Insights", 0.5, 0.22),
+
+    ("Support Actions\nAuto Reply • Human Escalation", 0.5, 0.08)
 ]
 
-fig, ax = plt.subplots(figsize=(6,10))
+fig, ax = plt.subplots(figsize=(7,11))
 
 for text, x, y in boxes:
     ax.text(
-        x, y, text,
-        ha='center', va='center',
-        bbox=dict(boxstyle="round,pad=0.4", fc="lightblue", ec="black")
+        x,
+        y,
+        text,
+        ha="center",
+        va="center",
+        bbox=dict(
+            boxstyle="round,pad=0.5",
+            fc="#d6eaf8",
+            ec="black"
+        )
     )
 
 for i in range(len(boxes)-1):
     ax.annotate(
         "",
-        xy=(0.5, boxes[i+1][2]+0.03),
-        xytext=(0.5, boxes[i][2]-0.03),
-        arrowprops=dict(arrowstyle="->", lw=2)
+        xy=(0.5, boxes[i+1][2] + 0.035),
+        xytext=(0.5, boxes[i][2] - 0.035),
+        arrowprops=dict(
+            arrowstyle="->",
+            lw=2
+        )
     )
 
 ax.set_xlim(0,1)
 ax.set_ylim(0,1)
-ax.axis('off')
+ax.axis("off")
 
-plt.title("AI Customer Support Automation Workflow", fontsize=14)
+plt.title(
+    "AI Customer Support Automation Workflow",
+    fontsize=15,
+    weight="bold"
+)
 
 plt.savefig("workflow_diagram.png", bbox_inches="tight")
 print("workflow_diagram.png created successfully")

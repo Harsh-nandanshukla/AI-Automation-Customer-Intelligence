@@ -34,7 +34,17 @@ df = load_data()
 
 if df.empty:
     st.stop()
+# ===============================
+# Download Results Button
+# ===============================
+st.subheader("Export Data")
 
+st.download_button(
+    label="Download Results CSV",
+    data=df.to_csv(index=False),
+    file_name="results.csv",
+    mime="text/csv"
+)
 # ===============================
 # Validate Required Columns
 # ===============================
@@ -199,8 +209,25 @@ if st.button("Classify Query"):
             st.write("Automation Action:")
             st.info(result["automation_action"])
 
+            st.write("Suggested Reply:")
+            st.success(result["suggested_reply"])
+
         except Exception as e:
             st.error(f"Classification failed: {e}")
+
+# ===============================
+# Priority Color Styling
+# ===============================
+
+def color_priority(val):
+    if val == "high":
+        return "background-color:#ff4b4b;color:white"
+    elif val == "medium":
+        return "background-color:#ffa500;color:white"
+    elif val == "low":
+        return "background-color:#2ecc71;color:white"
+    return ""
+
 
 # ===============================
 # Recent Queries Table
@@ -214,10 +241,12 @@ st.dataframe(
             "query",
             "predicted_category",
             "sentiment",
+            "priority",
             "confidence",
             "automation_action"
         ]
-    ].tail(10),
+    ].tail(10)
+    .style.applymap(color_priority, subset=["priority"]),
     use_container_width=True
 )
 

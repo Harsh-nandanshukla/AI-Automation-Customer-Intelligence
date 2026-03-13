@@ -1,9 +1,9 @@
 # AI Customer Support Automation Plan — Beastlife
 
 ## Objective
-Use AI to automatically understand, classify, and resolve customer queries
-across WhatsApp, Instagram DMs, and Email — reducing manual support workload
-and improving response time from hours to seconds.
+Use AI to automatically understand, classify, and resolve customer
+queries across WhatsApp, Instagram DMs, and Email — reducing manual
+support workload and improving response time from hours to seconds.
 
 ---
 
@@ -11,34 +11,89 @@ and improving response time from hours to seconds.
 
 Customer Message Received
         ↓
-AI Classifier (GPT-4o-mini + LangChain)
+AI Classifier (GPT-4o-mini + LangChain + Few-Shot Prompting)
         ↓
-Category + Sentiment + Confidence Score
+Category + Sentiment + Confidence Score + Suggested Reply
+        ↓
+Confidence Threshold Check (< 0.75 → Escalate immediately)
+        ↓
+Priority Assignment (angry → high, frustrated → medium, others → low)
         ↓
 Automation Decision Engine
         ↓
-Auto-Resolved  ←——→  Escalated to Human
+Auto-Resolved  ←————→  Escalated to Human
+
+---
+
+## Enhancements Implemented
+
+### 1. Suggested Reply Generation
+The classifier now generates a short automated reply alongside
+category and sentiment in the same API call. This enables the
+system to suggest an immediate response for every query without
+any additional cost or latency.
+
+Example output for an order status query:
+> "We're sorry for the wait! Your order is being processed and
+> we'll share your tracking link shortly."
+
+### 2. Confidence-Based Escalation Gate
+A confidence threshold of 0.75 was introduced. Any query where
+the model confidence falls below this threshold is automatically
+routed to a human agent regardless of category. This prevents
+incorrect automated responses from reaching frustrated customers.
+
+| Confidence | Action |
+|---|---|
+| ≥ 0.75 | Proceed with automation decision |
+| < 0.75 | Escalate to human immediately |
+
+### 3. Priority Assignment
+Each classified query receives a priority level based on sentiment:
+
+| Sentiment | Priority | Target Response Time |
+|---|---|---|
+| angry | high | 5 minutes |
+| frustrated | medium | 15 minutes |
+| neutral | low | 1 hour |
+| positive | low | 4 hours |
+
+Angry sentiment overrides all automation rules — even
+auto-resolvable categories are escalated when a customer
+is detected as angry.
+
+### 4. Few-Shot Prompting for Edge Cases
+Few-shot examples were added directly to the classification
+prompt for the most common boundary cases identified during
+testing:
+
+- order_status vs delivery_delay
+- payment_failure vs refund_request
+
+This improved handling of semantically overlapping queries
+and reduced label ambiguity errors.
+
+### 5. Dashboard CSV Export
+A download button was added to the Streamlit dashboard so
+support managers can export classified results for offline
+analysis, reporting, or integration with external tools.
 
 ---
 
 ## Automation Decision Logic
 
-| Category           | Confidence  | Sentiment        | Action                          |
-|--------------------|-------------|------------------|---------------------------------|
-| order_status       | > 0.80      | any              | Auto-reply with tracking link   |
-| delivery_delay     | > 0.80      | neutral          | Auto-reply with ETA update      |
-| delivery_delay     | > 0.80      | angry/frustrated | Escalate to human agent         |
-| refund_request     | any         | any              | Always escalate (financial)     |
-| product_issue      | any         | any              | Always escalate + flag QA team  |
-| subscription_issue | > 0.80      | any              | Auto-reply with self-service    |
-| payment_failure    | > 0.85      | any              | Auto-reply with retry link      |
-| general_query      | > 0.75      | any              | Auto-reply from FAQ search      |
-| any category       | < 0.75      | any              | Escalate — low confidence       |
-| any category       | any         | angry            | Override to escalate            |
-
-**Key Rule:** If sentiment is angry regardless of category or confidence,
-the system escalates to a human agent. Frustrated customers should never
-receive a bot-only response.
+| Category | Confidence | Sentiment | Action |
+|---|---|---|---|
+| order_status | ≥ 0.75 | any | Auto-reply with tracking link |
+| delivery_delay | ≥ 0.75 | neutral | Auto-reply with ETA update |
+| delivery_delay | ≥ 0.75 | angry/frustrated | Escalate to human |
+| refund_request | any | any | Always escalate (financial) |
+| product_issue | any | any | Always escalate + flag QA |
+| subscription_issue | ≥ 0.75 | any | Auto-reply with self-service |
+| payment_failure | ≥ 0.85 | any | Auto-reply with retry link |
+| general_query | ≥ 0.75 | any | Auto-reply from FAQ |
+| any category | < 0.75 | any | Escalate — low confidence |
+| any category | any | angry | Override — always escalate |
 
 ---
 
@@ -59,7 +114,6 @@ receive a bot-only response.
 - Immediately acknowledge receipt with automated message
 - Send refund policy document automatically
 - Create support ticket and assign to human agent
-- Send status update to customer at each stage of refund process
 - Financial decisions always require human approval
 
 ### 4. Product Issues (Auto-Resolve Rate: ~0% — Always Escalated)
@@ -70,7 +124,7 @@ receive a bot-only response.
 
 ### 5. Subscription Issues (Auto-Resolve Rate: ~78%)
 - Send self-service portal link for pause, cancel, or modify
-- Handle flavor/quantity changes via automated subscription API
+- Handle flavor or quantity changes via automated subscription API
 - Escalate only if customer has been incorrectly charged
 
 ### 6. Payment Failures (Auto-Resolve Rate: ~55%)
@@ -80,7 +134,7 @@ receive a bot-only response.
 - Trigger real-time alert to payment gateway for investigation
 
 ### 7. General Queries (Auto-Resolve Rate: ~88%)
-- Search FAQ vector database using semantic similarity
+- Search FAQ knowledge base using semantic similarity
 - Return most relevant answer automatically
 - If similarity score below threshold, escalate to human
 - Continuously improve FAQ database from resolved queries
@@ -89,58 +143,47 @@ receive a bot-only response.
 
 ## Sentiment-Based Priority Queue
 
-When queries reach human agents, they are prioritized by sentiment:
+When queries reach human agents they are prioritized by sentiment:
 
-Priority 1 — Angry customers (immediate response target: 5 min)
-Priority 2 — Frustrated customers (target: 15 min)
-Priority 3 — Neutral customers (target: 1 hour)
-Priority 4 — Positive customers (target: 4 hours)
+Priority 1 — Angry (immediate response target: 5 min)
+Priority 2 — Frustrated (target: 15 min)
+Priority 3 — Neutral (target: 1 hour)
+Priority 4 — Positive (target: 4 hours)
 
 ---
 
 ## Tools & Architecture
 
-| Layer              | Tool                        | Purpose                        |
-|--------------------|-----------------------------|--------------------------------|
-| AI Classification  | GPT-4o-mini + LangChain     | Category + sentiment detection |
-| Vector FAQ Search  | Chroma DB                   | Semantic FAQ matching          |
-| API Backend        | FastAPI                     | Webhook receiver               |
-| Automation Flows   | n8n (self-hosted)           | WhatsApp/email auto-replies    |
-| Dashboard          | Streamlit + Plotly          | Insights visualization         |
-| Data Storage       | Supabase (PostgreSQL)       | Ticket storage and analytics   |
+| Layer | Tool | Purpose |
+|---|---|---|
+| AI Classification | GPT-4o-mini + LangChain | Category + sentiment + reply |
+| Few-Shot Prompting | LangChain prompt templates | Edge case accuracy |
+| API Backend | FastAPI | Webhook receiver |
+| Automation Flows | n8n (self-hosted) | WhatsApp/email auto-replies |
+| Dashboard | Streamlit + Plotly | Insights visualization |
+| Data Storage | Supabase (PostgreSQL) | Ticket storage and analytics |
 
 ---
 
 ## How the System Scales
 
-**At 500 queries/day (current prototype level)**
-- Single FastAPI server handles all classification
-- Direct synchronous API calls to OpenAI
-- Chroma runs locally for FAQ search
-
-**At 5,000 queries/day**
-- Add Redis queue (Celery) between ingestion and classifier
-- Workers process queries asynchronously in parallel
-- Vector cache handles 60-70% of queries without LLM call
-- Cost stays low — most common queries never hit the API
-
-**At 50,000 queries/day**
-- Horizontal scaling of FastAPI workers
-- Pinecone replaces Chroma for distributed vector search
-- Fine-tuned classification model replaces GPT-4o-mini
-- Real-time Kafka stream for multi-platform ingestion
+| Volume | Approach |
+|---|---|
+| 500 queries/day | Single FastAPI server, synchronous calls |
+| 5,000 queries/day | Redis queue + Celery workers + vector cache |
+| 50,000 queries/day | Horizontal scaling + Pinecone + fine-tuned model |
 
 ---
 
 ## Expected Business Impact
 
-| Metric                        | Before AI    | After AI       |
-|-------------------------------|--------------|----------------|
-| Avg first response time       | 4-6 hours    | < 30 seconds   |
-| Queries requiring human agent | 100%         | ~30%           |
-| Support team capacity needed  | 10 agents    | 3 agents       |
-| Customer satisfaction (CSAT)  | Baseline     | +35% estimated |
-| Cost per query resolved       | High         | Reduced ~70%   |
+| Metric | Before AI | After AI |
+|---|---|---|
+| Avg first response time | 4-6 hours | < 30 seconds |
+| Queries requiring human agent | 100% | ~30% |
+| Support team capacity needed | 10 agents | 3 agents |
+| Customer satisfaction (CSAT) | Baseline | +35% estimated |
+| Cost per query resolved | High | Reduced ~70% |
 
-Estimated **70% of queries auto-resolved** based on category
+Estimated 70% of queries auto-resolved based on category
 distribution from the 50-query dataset analysis.
